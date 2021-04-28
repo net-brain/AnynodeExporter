@@ -6,7 +6,7 @@ AnynodeExporter collects runtime values from TE-Systems anynode for monitoring t
 AnynodeExporter is developed as an ASP.net Core Application and therefore configured via appsettings. you can use the appsettings file or use an appsettings.Production.json file in your runtime directory. 
 
 An example for a appsettings.Production.json file could be the following:
-'
+```
 {
   "Logging": {
     "LogLevel": {
@@ -23,4 +23,4 @@ An example for a appsettings.Production.json file could be the following:
     "Period": 30
   }
 }
-'
+```
