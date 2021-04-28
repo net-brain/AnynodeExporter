@@ -1,7 +1,7 @@
 # Docker
 
 We highly recommend running the anynode exporter under a container environment. In the following, the configuration is carried out using docker-compose. 
-In addition to the Docker runtime, you must also install the program `docker-compose` on the target machine.  
+In addition to the Docker runtime, you must also install the program `docker-compose` on the target machine. You can finde the docker repository under 
 
  - Create a directory in which you copy the docker-compose.yaml and the  appsettings.Production.json.  
  - Configure the  appsettings.Production.json according to your requirements.
