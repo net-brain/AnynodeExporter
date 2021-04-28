@@ -1,1 +1,1 @@
-#Grafana files for Anynode Exporter
+Grafana files for Anynode Exporter
