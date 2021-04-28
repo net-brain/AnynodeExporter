@@ -1,2 +1,2 @@
 # AnynodeExporter
-prometeheus exporter for TE-Systems anynode
+prometheus exporter for TE-Systems anynode
