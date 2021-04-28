@@ -1,1 +1,1 @@
-Grafana files for Anynode Exporter
+# Grafana Support will be added soon
