@@ -3,9 +3,10 @@ services:
     exporter:
         image: netbrainit/anynodeexporter:latest
         ports:
-            - "9910:9910"
+            - "9910:80"
         restart: always
         volumes:
             - ./appsettings.Production.json:/app/appsettings.Production.json
         environment:
+            - ""
             - "TZ=Europe/Berlin"
