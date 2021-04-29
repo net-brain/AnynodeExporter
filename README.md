@@ -21,15 +21,15 @@ The program needs the following settings:
 All entries are made here using an environment variable. A change or replacement of the appsettings file is also possible. The environment variables must always start with 'ae_'.
 The above information can be found under environment:
 
-``
+``` 
 environment:
    - "ae_Anynode__User = anadmin"
    - "ae_Anynode__Password = secret"
    - "ae_Anynode__Url = https: //192.168.178.10"
-``
+```
 # Read out the data with prometheus
 Prometheus reads the data from the configured exporters in a regular cycle. Prometheus then saves the data in its own database. Prometheus is configured in prometheus.yml
-``
+```
 global:
   scrape_interval: 15s # By default, scrape targets every 15 seconds.
 
@@ -44,7 +44,7 @@ scrape_configs:
     scrape_interval: 30s
     static_configs:
       - targets: ['anynodeexporter: 9910']
-``
+```
 Note that the URL `anynodeexporter: 9910` is derived from the name given in the` docker-compose.yml` under `services`.
 # Starting and stopping the system
 You can start the system by entering `docker-compose up -d`. This must be done in the directory in which the file `docker-compose.yml` is located.
