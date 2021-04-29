@@ -30,8 +30,8 @@ environment:
 # Starting and stopping the system
 You can start the system by entering `docker-compose up -d`. This must be done in the directory in which the file `docker-compose.yml` is located.
 To stop docker-compose down to exit normally, or docker-compose down --rmi all to exit and remove the execution data. For further commands please consult the documentation of docker-compose.
-When Anynodeexporter and prometheus have started, you can check the operational readiness by calling the URL http://servername:9910/ metrics. The anynode nodes should now be 
-![displayed here:](exporter.PNG)
+When Anynodeexporter and prometheus have started, you can check the operational readiness by calling the URL http://servername:9910/ metrics. The anynode nodes should now be displayed here:
+![exporter](exporter.PNG)
 # Read out the data with prometheus
 Prometheus reads the data from the configured exporters in a regular cycle. Prometheus then saves the data in its own database. Prometheus is configured in prometheus.yml
 ```
