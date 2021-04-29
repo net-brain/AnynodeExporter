@@ -1,12 +1,46 @@
-version: "3"
+version: '3'
+volumes:
+  prometheus-data:
+  grafana-data:
 services:
-    exporter:
-        image: netbrainit/anynodeexporter:latest
-        ports:
-            - "9910:80"
-        restart: always
-        environment:
-            - "ae_Anynode__User=anadmin"
-            - "ae_Anynode__Password=secret"
-            - "ae_Anynode__Url=https://192.168.178.10"
-            - "TZ=Europe/Berlin"
+  anynodeexporter:
+    image: netbrainit/anynodeexporter:latest
+    ports:
+      - "9910:9910"
+    restart: always
+    environment:
+      - "ae_Anynode__User=anadmin"
+      - "ae_Anynode__Password=secret"
+      - "ae_Anynode__Url=https://10.10.10.10"
+      - "TZ=Europe/Berlin"
+#### prometheus ####
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus-data:/prometheus
+    command:
+      - '--storage.tsdb.no-lockfile'
+      - '--storage.tsdb.retention.time=30d'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+    restart: always
+    ports:
+      - "9090:9090"
+#### grafana ####
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - grafana-data:/var/lib/grafana/
+    environment:
+      - "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,savantly-heatmap-panel"
+#      - "GF_SECURITY_ADMIN_USER=admin"
+#      - "GF_SECURITY_ADMIN_PASSWORD=secret"
+      - "GF_AUTH_ANONYMOUS_ENABLED=true"
+      - "GF_USERS_ALLOW_SIGN_UP=false"
+      - "GF_AUTH_ANONYMOUS_ORG_ROLE=Admin"
+    restart: always
+    ports:
+      - 3000:3000
