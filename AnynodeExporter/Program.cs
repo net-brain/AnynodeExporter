@@ -24,7 +24,8 @@ namespace AnynodeExporter
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                    .UseUrls("http://*:9910"); 
                 });
     }
 }
