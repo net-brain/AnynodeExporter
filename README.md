@@ -30,7 +30,7 @@ environment:
 # Starting and stopping the system
 You can start the system by entering `docker-compose up -d`. This must be done in the directory in which the file `docker-compose.yml` is located.
 To stop docker-compose down to exit normally, or docker-compose down --rmi all to exit and remove the execution data. For further commands please consult the documentation of docker-compose.
-When Anynodeexporter and prometheus have started, you can check the operational readiness by calling the URL http://servername:9910/ metrics. The anynode nodes should now be displayed here:
+When Anynodeexporter and prometheus have started, you can check the operational readiness by calling the URL http://servername:9910/metrics/. The anynode nodes should now be displayed here:
 ![exporter](exporter.PNG)
 # Read out the data with prometheus
 Prometheus reads the data from the configured exporters in a regular cycle. Prometheus then saves the data in its own database. Prometheus is configured in prometheus.yml
@@ -50,7 +50,8 @@ scrape_configs:
     static_configs:
       - targets: ['anynodeexporter: 9910']
 ```
-Note that the URL `anynodeexporter: 9910` is derived from the name given in the` docker-compose.yml` under `services`.
+Note that the URL `anynodeexporter: 9910` is derived from the name given in the` docker-compose.yml` under `services`. Now you should be able to access prometheus by calling http://servername:9090/ 
+![prometheus](prometheus.PNG)
 
 # Exporter's metrics
 Anynodeexporter reads the following metrics from anynode:
@@ -64,3 +65,5 @@ Anynodeexporter reads the following metrics from anynode:
 The actual system load (CPU, RAM, hard disk) cannot currently be read out because the anynode REST API does not yet provide this data.
 
 From here the data can be processed further. This can be done e.g. with the help of Grafana (https://www.grafana.com). Among other things, Grafana can visualize prometheus data in the form of dashboards.
+A sample of a dashboard is included in the grafana folder and looks like this:
+![grafana](grafana.PNG)
