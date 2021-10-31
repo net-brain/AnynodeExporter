@@ -112,7 +112,14 @@ namespace AnynodeExporter.Service
                     var licenses = await GetApiResponse<List<License>>(_settings.Url + "/api/licenses/get?version=0");
                     foreach (var lic in licenses)
                     {
-                        _lics.WithLabels(lic.name).Set((DateTime.Parse(lic.validUntil[4..]) - DateTime.Now).Days);
+                        if (lic.validUntil!=null)
+                        {
+                            if (lic.validUntil.StartsWith("UTC"))
+                            {
+                                _lics.WithLabels(lic.name).Set((DateTime.Parse(lic.validUntil[4..]) - DateTime.Now).Days);
+                            }
+                        }
+
                     }
                 }
                 catch (Exception ex)
