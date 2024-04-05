@@ -1,5 +1,6 @@
-﻿using System.Net.Http;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Text.Json;
 using AnynodeExporter.Model;
@@ -18,6 +19,7 @@ public class DataChecker : BackgroundService
     private static Gauge _incomingCalls;
     private static Gauge _lics;
     private static Gauge _certs;
+    private static Gauge _certsregistered;
 
     public DataChecker(IOptions<AnynodeSettings> settings,
                     ILogger<DataChecker> logger,
@@ -56,16 +58,16 @@ public class DataChecker : BackgroundService
          {
              LabelNames = new[] { "ldap" }
          });
-        _lics = Metrics.CreateGauge("anynode_license_rest", "Rest in days for the license.",
-         new GaugeConfiguration
-         {
-             LabelNames = new[] { "lic" }
-         });
-        _certs = Metrics.CreateGauge("anynode_certificate_rest", "Rest in days for the certificate.",
+        _certs = Metrics.CreateGauge("anynode_certificate_node_expiration_in_days", "Certificate expiration in days for the node certificate.",
          new GaugeConfiguration
          {
              LabelNames = new[] { "cert" }
          });
+        _certsregistered = Metrics.CreateGauge("anynode_certificate_registered_expiration_in_days", "Certificate expiration in days for certificates used for registered apps.",
+        new GaugeConfiguration
+        {
+            LabelNames = new[] { "cn" }
+        });
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -91,48 +93,14 @@ public class DataChecker : BackgroundService
                 {
                     _ldapState.WithLabels(ldap.displayName).Set(ldap.state == "connected" ? 1 : 0);
                 }
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error in Checking Dashboard:",ex);
-            }
-
-            try
-            {
-                var licenses = await GetApiResponse<List<License>>(_settings.Url + "/api/licenses/get?version=0");
-                foreach (var lic in licenses)
+                foreach (var cert in dashboard.certificates)
                 {
-                    if (lic.validUntil!=null)
-                    {
-                        if (lic.validUntil.StartsWith("UTC"))
-                        {
-                            _lics.WithLabels(lic.name).Set((DateTime.Parse(lic.validUntil[4..]) - DateTime.Now).Days);
-                        }
-                    }
-
+                    if (cert.commonName != null) _certsregistered.WithLabels(cert.commonName).Set(cert.expiresInDays);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error in Checking Licenses: {ex}",ex);
-            }
-
-            try
-            {
-                var nodes = await GetApiResponse<List<Node>>(_settings.Url + "/api/nodes/get?version=0");
-                foreach (var node in nodes)
-                {
-                    var certs = await GetApiResponse<List<Certificates>>($"{_settings.Url}/api/nodes/certificates/get?version=0&node={node.id}");
-                    foreach (var cert in certs)
-                    {
-                        if (cert.certificate != null) _certs.WithLabels(cert.certificate.subject).Set((DateTime.Parse(cert.certificate.validUntil[4..]) - DateTime.Now).Days);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error in Checking Licenses: {ex}",ex);
+                _logger.LogError("Error in Checking Dashboard: {ex}",ex);
             }
 
             await Task.Delay(_settings.Period * 1000, stoppingToken);
@@ -150,4 +118,3 @@ public class DataChecker : BackgroundService
         return JsonSerializer.Deserialize<T>(result);
     }
 }
-
